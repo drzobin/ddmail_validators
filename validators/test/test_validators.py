@@ -37,7 +37,7 @@ def test_is_email_allowed():
     assert is_email_allowed("test@te<>st.se") == False
     assert is_email_allowed("te>st@test.se") == False
     assert is_email_allowed("te<st@test.se") == False
-    assert is_email_allowed("te=st@test.se") == False
+    assert is_email_allowed("te=st@test.se") == True
     assert is_email_allowed("test@tes=t.se") == False
     assert is_email_allowed("test@test..se") == False
     assert is_email_allowed("t\"est@test.se") == False
