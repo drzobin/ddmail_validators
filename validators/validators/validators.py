@@ -202,3 +202,13 @@ def is_openpgp_key_fingerprint_allowed(fingerprint):
             return False
 
     return True
+
+# Validate openpgp keyring filename. Only allow the following chars: A-Z and 0-9
+def is_openpgp_keyring_allowed(keyring):
+    pattern = re.compile(r"[A-Z0-9]")
+
+    for char in keyring:
+        if not re.match(pattern, char):
+            return False
+
+    return True
