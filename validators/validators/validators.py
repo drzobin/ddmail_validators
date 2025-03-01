@@ -46,7 +46,7 @@ def is_domain_allowed(domain):
     return True
 
 # Validate email address. Only allow the following chars: a-z, 0-9 and @.-
-def is_email_allowed(self, email):
+def is_email_allowed(email):
     # Check email length.
     if not len(email) > 6:
         return False
@@ -89,7 +89,7 @@ def is_email_allowed(self, email):
     return True
 
 # Validate account string. Only allow the following chars: A-Z and 0-9
-def is_account_allowed(self, account):
+def is_account_allowed(account):
     pattern = re.compile(r"[A-Z0-9]")
 
     for char in account:
@@ -99,7 +99,7 @@ def is_account_allowed(self, account):
     return True
 
 # Validate openpgp public key fingerprint string. Only allow the following chars: A-Z, 0-9
-def is_fingerprint_allowed(self, fingerprint):
+def is_fingerprint_allowed(fingerprint):
     if fingerprint == None:
         return False
 
