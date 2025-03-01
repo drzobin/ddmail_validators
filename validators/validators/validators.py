@@ -212,3 +212,17 @@ def is_openpgp_keyring_allowed(keyring):
             return False
 
     return True
+
+
+# Valdate sha256 checksum. Only allow the following chars:a-z, A-Z  and 0-9
+def is_sha256_allowed(checksum):
+    if not len(checksum) == 64:
+        return False
+
+    pattern = re.compile(r"[a-zA-Z0-9]")
+
+    for char in checksum:
+        if not re.match(pattern, char):
+            return False
+
+    return True
