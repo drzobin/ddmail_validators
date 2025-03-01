@@ -1,4 +1,4 @@
-from validators.validators import is_email_allowed, is_domain_allowed, is_password_allowed
+from validators.validators import is_email_allowed, is_domain_allowed, is_password_allowed, is_sha256_allowed
 import pytest
 import os
 
