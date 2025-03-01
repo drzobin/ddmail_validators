@@ -83,7 +83,7 @@ def is_email_allowed(email):
             return False
 
     # Validate domain part of email.
-    if self.is_domain_allowed(domain_part) != True:
+    if is_domain_allowed(domain_part) != True:
         return False
 
     return True
