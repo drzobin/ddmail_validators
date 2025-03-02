@@ -1,4 +1,4 @@
-from validators.validators import is_email_allowed, is_domain_allowed, is_password_allowed, is_sha256_allowed
+from validators.validators import is_email_allowed, is_domain_allowed, is_password_allowed, is_account_allowed, is_sha256_allowed
 import pytest
 import os
 
@@ -58,6 +58,10 @@ def test_is_domain_allowed():
     assert is_domain_allowed("test=t.se") == False
     assert is_domain_allowed("testtest..se") == False
     assert is_domain_allowed("t\"est@test.se") == False
+
+def test_is_account_allowed():
+    assert is_account_allowed("DEV") == True
+
 
 def test_is_sha256_allowed():
     assert is_sha256_allowed("7b7632005be0f36c5d1663a6c5ec4d13315589d65e1ef8687fb4b9866f9bc4b0") == True
