@@ -61,6 +61,15 @@ def test_is_domain_allowed():
 
 def test_is_account_allowed():
     assert is_account_allowed("DEV") == True
+    assert is_account_allowed("A1B2C3") == True
+    assert is_account_allowed("AbC") == False
+    assert is_account_allowed("A#BC") == False
+    assert is_account_allowed("A>BC") == False
+    assert is_account_allowed("A;BC") == False
+    assert is_account_allowed("A.BC") == False
+    assert is_account_allowed("A,BC") == False
+    assert is_account_allowed("A-BC") == False
+    assert is_account_allowed("A_BC") == False
 
 
 def test_is_sha256_allowed():
