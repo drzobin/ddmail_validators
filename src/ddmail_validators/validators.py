@@ -1,8 +1,13 @@
 import re
 import dns.resolver
 
-# Validate username. Only allow the following chars: A-Z and 0-9
+
 def is_username_allowed(username):
+    """Validate username string. Only allow the following chars: A-Z and 0-9.
+
+    Keyword arguments:
+    username -- string containing the username.
+    """
     pattern = re.compile(r"[A-Z0-9]")
 
     for char in username:
@@ -11,8 +16,13 @@ def is_username_allowed(username):
 
     return True
 
-# Validate password. Only allow the following chars: A-Z, a-z and 0-9
+
 def is_password_allowed(password):
+    """Validate password. Only allow the following chars: A-Z, a-z and 0-9.
+
+    Keyword arguments:
+    password -- string containing the password.
+    """
     pattern = re.compile(r"[a-zA-Z0-9]")
 
     for char in password:
@@ -21,8 +31,14 @@ def is_password_allowed(password):
 
     return True
 
-# Validate domain names. Only allow the following chars: a-z, A-Z, 0-9 and .-
+
 def is_domain_allowed(domain):
+    """Validate domain names.
+    Only allow the following chars: a-z, A-Z, 0-9 and .-
+
+    Keyword arguments:
+    domain -- string containing the domain.
+    """
     if not len(domain) > 3:
         return False
 
@@ -45,8 +61,13 @@ def is_domain_allowed(domain):
 
     return True
 
-# Validate email address. Only allow the following chars: a-z, 0-9 and @.-
+
 def is_email_allowed(email):
+    """Validate email address. Only allow the following chars: a-z, 0-9 and @.-
+
+    Keyword arguments:
+    email -- string containing the email.
+    """
     # Check email length.
     if not len(email) > 6:
         return False
@@ -60,7 +81,8 @@ def is_email_allowed(email):
     if email.endswith('.') or email.endswith('@') or email.endswith('-'):
         return False
 
-    # Split email in local part and domain part example [local part]@[domain part].
+    # Split email in local part and domain part.
+    # Example: [local part]@[domain part].
     splitted_email = email.split('@')
     local_part = splitted_email[0]
     domain_part = splitted_email[1]
@@ -83,13 +105,18 @@ def is_email_allowed(email):
             return False
 
     # Validate domain part of email.
-    if is_domain_allowed(domain_part) != True:
+    if is_domain_allowed(domain_part) is not True:
         return False
 
     return True
 
-# Validate account string. Only allow the following chars: A-Z and 0-9
+
 def is_account_allowed(account):
+    """Validate account id string. Only allow the following chars: A-Z and 0-9
+
+    Keyword arguments:
+    account -- string containing the account is.
+    """
     pattern = re.compile(r"[A-Z0-9]")
 
     for char in account:
@@ -98,9 +125,15 @@ def is_account_allowed(account):
 
     return True
 
-# Validate openpgp public key fingerprint string. Only allow the following chars: A-Z, 0-9
+
 def is_fingerprint_allowed(fingerprint):
-    if fingerprint == None:
+    """Validate openpgp public key fingerprint string.
+    Only allow the following chars: A-Z, 0-9
+
+    Keyword arguments:
+    fingerprint -- string containing the openpgp public key fingerprint.
+    """
+    if fingerprint is None:
         return False
 
     # Fingerprint string should be 40 char.
@@ -116,8 +149,15 @@ def is_fingerprint_allowed(fingerprint):
 
     return True
 
-# Validate dns domain mx record
-def is_mx_valid(domain,host,priority):
+
+def is_mx_valid(domain, host, priority):
+    """Validate dns domain mx record.
+
+    Keyword arguments:
+    domain -- string containing the domain.
+    host -- string containing the host.
+    priority -- string containing the priority.
+    """
     try:
         answers = dns.resolver.resolve(domain, 'MX')
         if len(answers) == 1 and str(answers[0].exchange) == host and str(answers[0].preference == priority):
@@ -127,8 +167,14 @@ def is_mx_valid(domain,host,priority):
     except:
         return False
 
-# Validate dns spf (as txt) record
-def is_spf_valid(domain,spf_record):
+
+def is_spf_valid(domain, spf_record):
+    """Validate dns spf (as txt) record.
+
+    Keyword aguments:
+    domain -- string containg the domain.
+    spf_record -- string containg the spf record.
+    """
     try:
         answers = dns.resolver.resolve(domain, 'TXT')
         for rdata in answers:
@@ -139,8 +185,14 @@ def is_spf_valid(domain,spf_record):
     except:
         return False
 
-# Validate dns dkim (as txt) record
-def is_dkim_valid(domain,dkim_record):
+
+def is_dkim_valid(domain, dkim_record):
+    """Validate dns dkim (as txt) record.
+
+    Keyword arguments:
+    domain -- string containg domain.
+    dkim_record -- string containg DKIM record.
+    """
     try:
         answers = dns.resolver.resolve("mail._domainkey." + domain, 'TXT')
         for rdata in answers:
@@ -151,8 +203,14 @@ def is_dkim_valid(domain,dkim_record):
     except:
         return False
 
-# Validate dns dmarc (as txt) record
-def is_dmarc_valid(domain,dmarc_record):
+
+def is_dmarc_valid(domain, dmarc_record):
+    """Validate dns dmarc (as txt) record.
+
+    Keyword arguments:
+    domain -- string containg domain.
+    dmarc_record -- string containg DMARC record.
+    """
     try:
         answers = dns.resolver.resolve("_dmarc." + domain, 'TXT')
         for rdata in answers:
@@ -163,19 +221,40 @@ def is_dmarc_valid(domain,dmarc_record):
     except:
         return False
 
-# Validate openpgp public key. Only allow the following chars: A-Z, a-z, 0-9 and +/=
+
 def is_openpgp_public_key_allowed(public_key):
-    if public_key == None:
+    """Validate openpgp public key.
+    Only allow the following chars: A-Z, a-z, 0-9 and +/=
+
+    Keyword arguments:
+    public_key -- string containg OpenPGP public key in armored format.
+    """
+    if public_key is None:
         return False
 
     # Check start and end of string.
-    if public_key.startswith("-----BEGIN PGP PUBLIC KEY BLOCK-----") != True:
+    if public_key.startswith(
+            "-----BEGIN PGP PUBLIC KEY BLOCK-----"
+            ) is not True:
+
         return False
-    if public_key.endswith("-----END PGP PUBLIC KEY BLOCK-----") != True:
+    if public_key.endswith(
+            "-----END PGP PUBLIC KEY BLOCK-----"
+            ) is not True:
+
         return False
 
-    public_key = public_key.replace("-----BEGIN PGP PUBLIC KEY BLOCK-----","", 1)
-    public_key = public_key.replace("-----END PGP PUBLIC KEY BLOCK-----","", 1)
+    public_key = public_key.replace(
+            "-----BEGIN PGP PUBLIC KEY BLOCK-----",
+            "",
+            1
+            )
+
+    public_key = public_key.replace(
+            "-----END PGP PUBLIC KEY BLOCK-----",
+            "",
+            1
+            )
 
     # Only allow A-Z ,a-z, 0-9 and +/=
     pattern = re.compile(r"[a-zA-Z0-9\+\/\=\s]")
@@ -185,9 +264,15 @@ def is_openpgp_public_key_allowed(public_key):
 
     return True
 
-# Validate openpgp public key fingerprint string. Only allow the following chars: A-Z, 0-9
+
 def is_openpgp_key_fingerprint_allowed(fingerprint):
-    if fingerprint == None:
+    """Validate openpgp public key fingerprint string.
+    Only allow the following chars: A-Z, 0-9
+
+    Keyword arguments:
+    fingerprint -- string containg OpenPGP key fingeprint.
+    """
+    if fingerprint is None:
         return False
 
     # Fingerprint string should be 40 char.
@@ -203,8 +288,14 @@ def is_openpgp_key_fingerprint_allowed(fingerprint):
 
     return True
 
-# Validate openpgp keyring filename. Only allow the following chars: A-Z and 0-9
+
 def is_openpgp_keyring_allowed(keyring):
+    """Validate openpgp keyring filename.
+    Only allow the following chars: A-Z and 0-9
+
+    Keyword arguments:
+    keyring -- string containg OpenPGP keyring filename.
+    """
     pattern = re.compile(r"[A-Z0-9]")
 
     for char in keyring:
@@ -214,8 +305,13 @@ def is_openpgp_keyring_allowed(keyring):
     return True
 
 
-# Valdate sha256 checksum. Only allow the following chars:a-z, A-Z  and 0-9
 def is_sha256_allowed(checksum):
+    """Validate sha256 checksum.
+    Only allow the following chars: a-z, A-Z  and 0-9
+
+    Keyword arguments:
+    checksum -- string containg the sha256 checksum.
+    """
     if not len(checksum) == 64:
         return False
 
