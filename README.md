@@ -22,7 +22,7 @@ Step 3: Install required dependencies<br>
 Step 4: Build package<br>
 `python -m pip install --upgrade build`<br>
 `python -m build `<br><br>
-Packages is now located under dist folder
+Packages is now located under dist folder<br>
 <br>
 Step 5: Install package<br>
 `pip install dist/[package name].whl`
