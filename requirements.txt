@@ -2,3 +2,4 @@ pytest
 coverage
 dnspython
 flake8
+hatchling
