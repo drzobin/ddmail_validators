@@ -9,21 +9,21 @@ Developt for and tested on debian 12.
 
 ## Building and installing using hatchling.
 Step 1: clone github repo<br>
-`git clone https://github.com/drzobin/ddmail_validators [code path]`
+`git clone https://github.com/drzobin/ddmail_validators [code path]`<br>
 `cd [code path]`<br>
-<p>
+<br>
 Step 2: Setup python virtual environments<br>
 `python -m venv [venv path]`<br>
-`source [venv path]/bin/activate`
-<p>
+`source [venv path]/bin/activate`<br>
+<br>
 Step 3: Install required dependencies<br>
-`pip install -r requirements.txt`
-<p>
+`pip install -r requirements.txt`<br>
+<br>
 Step 4: Build package<br>
 `python -m pip install --upgrade build`<br>
 `python -m build `<br><br>
 Packages is now located under dist folder
-<p>
+<br>
 Step 5: Install package<br>
 `pip install dist/[package name].whl`
 
