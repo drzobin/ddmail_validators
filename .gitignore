@@ -1,4 +1,5 @@
 .coverage
-validators/__pycache__/
-validators/validators/__pycache__/
+dist/
+tests/__pycache__/
 validators/tests/__pycache__/
+src/ddmail_validators/__pycache__/
