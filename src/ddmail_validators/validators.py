@@ -125,31 +125,6 @@ def is_account_allowed(account):
 
     return True
 
-
-def is_fingerprint_allowed(fingerprint):
-    """Validate openpgp public key fingerprint string.
-    Only allow the following chars: A-Z, 0-9
-
-    Keyword arguments:
-    fingerprint -- string containing the openpgp public key fingerprint.
-    """
-    if fingerprint is None:
-        return False
-
-    # Fingerprint string should be 40 char.
-    allowed_len = 40
-    if len(fingerprint) != allowed_len:
-        return False
-
-    # Only allow A-Z, 0-9
-    pattern = re.compile(r"[A-Z0-9]")
-    for char in fingerprint:
-        if not re.match(pattern, char):
-            return False
-
-    return True
-
-
 def is_mx_valid(domain, host, priority):
     """Validate dns domain mx record.
 
