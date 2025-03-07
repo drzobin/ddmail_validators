@@ -1,6 +1,6 @@
 [project]
 name = "ddmail_validators"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="Robin Larsson", email="me@drz.se" },
 ]
@@ -16,6 +16,22 @@ dependencies = [
 ]
 license = "AGPL-3.0"
 license-files = ["LICEN[CS]E*"]
+
+[project.optional-dependencies]
+dev = [
+  "dnspython",
+  "pytest",
+  "pytest-cov",
+  "flake8",
+  "hatchling",
+  "twine",
+]
+test = [
+  "dnspython",
+  "pytest",
+  "pytest-cov",
+  "flake8",
+]
 
 [project.urls]
 Homepage = "https://github.com/drzobin/ddmail_validators"
