@@ -7,7 +7,10 @@ DDMail is a e-mail system/service that prioritize privacy and security. A curren
 ## Operating system
 Developt for and tested on debian 12.
 
-## Building and installing using hatchling.
+## Installing using pip
+`pip install ddmail-validators`
+
+## Building and installing from source using hatchling.
 Step 1: clone github repo<br>
 `git clone https://github.com/drzobin/ddmail_validators [code path]`<br>
 `cd [code path]`<br>
