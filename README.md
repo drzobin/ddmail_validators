@@ -30,5 +30,9 @@ Packages is now located under dist folder<br>
 Step 5: Install package<br>
 `pip install dist/[package name].whl`
 
+## Testing
+`cd [code path]`<br>
+`pytest --cov=ddmail_validators tests/`
+
 ## Coding
 Follow PEP8 and PEP257. Use Flake8 with flake8-docstrings for linting. Strive for 100% test coverage.
