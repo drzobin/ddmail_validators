@@ -2,12 +2,17 @@ import re
 import dns.resolver
 
 
-def is_username_allowed(username):
+def is_username_allowed(username,username_len=12):
     """Validate username string. Only allow the following chars: A-Z and 0-9.
 
     Keyword arguments:
     username -- string containing the username.
+    username_len -- integer max length of username string, default 12.
     """
+    # Check length.
+    if len(username) != username_len:
+        return False
+
     pattern = re.compile(r"[A-Z0-9]")
 
     for char in username:
@@ -17,12 +22,17 @@ def is_username_allowed(username):
     return True
 
 
-def is_password_allowed(password):
+def is_password_allowed(password, password_len=24):
     """Validate password. Only allow the following chars: A-Z, a-z and 0-9.
 
     Keyword arguments:
     password -- string containing the password.
+    password_len -- integer max length of password string, default 24.
     """
+    # Check length.
+    if len(password) != password_len:
+        return False
+
     pattern = re.compile(r"[a-zA-Z0-9]")
 
     for char in password:
@@ -111,12 +121,17 @@ def is_email_allowed(email):
     return True
 
 
-def is_account_allowed(account):
+def is_account_allowed(account,account_len=12):
     """Validate account id string. Only allow the following chars: A-Z and 0-9
 
     Keyword arguments:
     account -- string containing the account is.
+    account_len -- integer max length of account string, default 12.
     """
+    # Check length.
+    if len(account) != account_len:
+        return False
+
     pattern = re.compile(r"[A-Z0-9]")
 
     for char in account:
@@ -124,6 +139,7 @@ def is_account_allowed(account):
             return False
 
     return True
+
 
 def is_mx_valid(domain, host, priority):
     """Validate dns domain mx record.
@@ -293,6 +309,74 @@ def is_sha256_allowed(checksum):
     pattern = re.compile(r"[a-zA-Z0-9]")
 
     for char in checksum:
+        if not re.match(pattern, char):
+            return False
+
+    return True
+
+
+def is_db_id_allowed(id):
+    """Validate database ID.
+    Only allow positive integers.
+
+    Keyword arguments:
+    id -- integer containing the datbase id.
+    """
+    # Check that id is integer.
+    try:
+        i = 1
+        i = i + id
+    except ValueError:
+        return False
+    except TypeError:
+        return False
+
+    # Check that id is not negative.
+    if not id >= 0:
+        return False
+
+    return True
+
+
+def is_cookie_allowed(cookie,cookie_len=128):
+    """Validate flask session secret cookie. 
+    Only allow the following chars: A-Z, a-z and 0-9.
+
+    Keyword arguments:
+    cookie -- string containing the session secret cookie.
+    cookie_len -- the allowed length of the string, default 128.
+    """
+    # Check length.
+    if len(cookie) != cookie_len:
+        return False
+
+    # Allowed chars.
+    pattern = re.compile(r"[a-zA-Z0-9]")
+
+    # Check chars in string.
+    for char in cookie:
+        if not re.match(pattern, char):
+            return False
+
+    return True
+
+def is_password_key_allowed(key,key_len=4096):
+    """Validate password key. 
+    Only allow the following chars: A-Z, a-z and 0-9.
+
+    Keyword arguments:
+    key -- string containing the secret key.
+    key_len -- the allowed length of the key, default 4096.
+    """
+    # Check length.
+    if len(key) != key_len:
+        return False
+
+    # Allowed chars.
+    pattern = re.compile(r"[a-zA-Z0-9]")
+
+    # Check chars in string.
+    for char in key:
         if not re.match(pattern, char):
             return False
 
