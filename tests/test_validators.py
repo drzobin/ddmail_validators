@@ -1,42 +1,31 @@
-from ddmail_validators.validators import is_username_allowed, is_email_allowed, is_domain_allowed, is_password_allowed, is_account_allowed, is_sha256_allowed, is_mx_valid, is_spf_valid, is_dkim_valid, is_dmarc_valid, is_openpgp_public_key_allowed, is_openpgp_key_fingerprint_allowed, is_openpgp_keyring_allowed
+from ddmail_validators.validators import is_username_allowed, is_email_allowed, is_domain_allowed, is_password_allowed, is_account_allowed, is_sha256_allowed, is_mx_valid, is_spf_valid, is_dkim_valid, is_dmarc_valid, is_openpgp_public_key_allowed, is_openpgp_key_fingerprint_allowed, is_openpgp_keyring_allowed, is_cookie_allowed, is_db_id_allowed, is_password_key_allowed
 
 
 def test_is_username_allowed():
-    assert is_username_allowed("A") is True
-    assert is_username_allowed("1") is True
-    assert is_username_allowed("A2B83") is True
-    assert is_username_allowed("a2B83") is False
-    assert is_username_allowed("A2b83") is False
-    assert is_username_allowed("A2B#83") is False
-    assert is_username_allowed("A2B8=3") is False
-    assert is_username_allowed("A2B83;") is False
-    assert is_username_allowed("A2B8_3") is False
-    assert is_username_allowed("-A2B83") is False
-    assert is_username_allowed("\"A2B83") is False
+    assert is_username_allowed("FG1AOG6A2SX4") is True
+    assert is_username_allowed("FG1AOG6A2SX4A") is False
+    assert is_username_allowed("FG1AOG6A2SX") is False
+    assert is_username_allowed("FGaAOG6A2SX4") is False
+    assert is_username_allowed("!G1AOG6A2SX4") is False
+    assert is_username_allowed("FG1A-G6A2SX4") is False
+    assert is_username_allowed("F_1AOG6A2SX4") is False
+    assert is_username_allowed("FG1:OG6A2SX4") is False
+    assert is_username_allowed("FG1AOG6A2;X4") is False
+    assert is_username_allowed("FG1AOG6A2SX$") is False
 
 
 def test_is_password_allowed():
-    assert is_password_allowed("a2A83") is True
-    assert is_password_allowed("1a2A835") is True
-    assert is_password_allowed("F1a2A835V") is True
-    assert is_password_allowed("as3dgD5khjFgsad6Gjgb6") is True
-    assert is_password_allowed("aA8/+=\\") is False
-    assert is_password_allowed("aA8/+=\\vfgg") is False
-    assert is_password_allowed("aAx\"fds") is False
-    assert is_password_allowed("a-b3") is False
-    assert is_password_allowed("a--b3") is False
-    assert is_password_allowed("a<b3") is False
-    assert is_password_allowed("a>b5") is False
-    assert is_password_allowed("a>>6") is False
-    assert is_password_allowed("as3dgD5khjFgsad6Gj_gb6") is False
-    assert is_password_allowed("as3dgD5khjF#gsad6Gjgb6") is False
-    assert is_password_allowed("as3dgD5<khjFgsad6Gjgb6") is False
-    assert is_password_allowed("as3dgD5>khjFgsad6Gjgb6") is False
-    assert is_password_allowed("as3dgD5-khjFgsad6Gjgb6") is False
-    assert is_password_allowed("as3dgD5--khjFgsad6Gjgb6") is False
-    assert is_password_allowed("as3dgD5@khjFgsad6Gjgb6") is False
-    assert is_password_allowed("as3dgD5|khjFgsad6Gjgb6") is False
-    assert is_password_allowed("as3dg;D5khjFgsad6Gjgb6") is False
+    assert is_password_allowed("aBfD3Fd2G6Jg5dE4G5jQrG5D") is True
+    assert is_password_allowed("aBfD3Fd2G6Jg5dE4G5jQrG5DA") is False
+    assert is_password_allowed("1a2A835") is False
+    assert is_password_allowed("") is False
+    assert is_password_allowed("a<fD3Fd2G6Jg5dE4G5jQrG5D") is False
+    assert is_password_allowed("aBfD3Fd2G6Jg;dE4G5jQrG5D") is False
+    assert is_password_allowed("aBfD3:d2G6Jg5dE4G5jQrG5D") is False
+    assert is_password_allowed("-BfD3Fd2G6Jg5dE4G5jQrG5D") is False
+    assert is_password_allowed("aBfD3Fd2G6Jg5dE4G5jQrG5_") is False
+    assert is_password_allowed("aBfD3Fd2G\"Jg5dE4G5jQrG5D") is False
+    assert is_password_allowed("aBfD3!d2G6Jg5dE4G5jQrG5D") is False
 
 
 def test_is_domain_allowed():
@@ -76,16 +65,16 @@ def test_is_email_allowed():
 
 
 def test_is_account_allowed():
-    assert is_account_allowed("DEV") is True
-    assert is_account_allowed("A1B2C3") is True
-    assert is_account_allowed("AbC") is False
-    assert is_account_allowed("A#BC") is False
-    assert is_account_allowed("A>BC") is False
-    assert is_account_allowed("A;BC") is False
-    assert is_account_allowed("A.BC") is False
-    assert is_account_allowed("A,BC") is False
-    assert is_account_allowed("A-BC") is False
-    assert is_account_allowed("A_BC") is False
+    assert is_account_allowed("GQW3E4XN3BA2") is True
+    assert is_account_allowed("A1B2C3") is False
+    assert is_account_allowed("AbC1") is False
+    assert is_account_allowed("GQ#3E4XN3BA2") is False
+    assert is_account_allowed("G>Q3E4XN3BA2") is False
+    assert is_account_allowed("G4Q3E4X;3BA2") is False
+    assert is_account_allowed(".QW3E4XN3BA2") is False
+    assert is_account_allowed("GQW3E4X,3BA2") is False
+    assert is_account_allowed("GQW3E4X-3BA2") is False
+    assert is_account_allowed("GQW3E4XN3BA_") is False
 
 
 def test_is_mx_valid():
@@ -151,3 +140,35 @@ def test_is_sha256_allowed():
     assert is_sha256_allowed("7b7632005be\"f36c5d1663a6c5ec4d13315589d65e1ef8687fb4b9866f9bc4b0") is False
     assert is_sha256_allowed("7b7632005be-f36c5d1663a6c5ec4d13315589d65e1ef8687fb4b9866f9bc4b0") is False
     assert is_sha256_allowed("7b7632005b.0f36c5d1663a6c5ec4d13315589d65e1ef8687fb4b9866f9bc4b0") is False
+
+def test_is_db_id_allowed():
+    assert is_db_id_allowed("453") is False
+    assert is_db_id_allowed("1") is False
+    assert is_db_id_allowed("-1") is False
+    assert is_db_id_allowed("Ab2v") is False
+    assert is_db_id_allowed(-1) is False
+    assert is_db_id_allowed(-123) is False
+    assert is_db_id_allowed(0) is True
+    assert is_db_id_allowed(1) is True
+    assert is_db_id_allowed(4365) is True
+
+
+def test_is_cookie_allowed():
+    assert is_cookie_allowed("a"*128) is True
+    assert is_cookie_allowed(("a"*126)+"1"+"A") is True
+    assert is_cookie_allowed("A"*128) is True
+    assert is_cookie_allowed("1"*128) is True
+    assert is_cookie_allowed(("a"*126)+"-"+"A") is False
+    assert is_cookie_allowed(("a"*126)+"_"+"A") is False
+    assert is_cookie_allowed(("a"*126)+"4"+"!") is False
+    assert is_cookie_allowed("aB1") is False
+    assert is_cookie_allowed("a"*129) is False
+    assert is_cookie_allowed("a"*127) is False
+
+
+def test_is_password_key_allowed():
+    data = "A"*4096
+    print(data)
+    assert is_password_key_allowed(data) is True
+    assert is_password_key_allowed("A"*4097) is False
+    assert is_password_key_allowed("A"*4095) is False
