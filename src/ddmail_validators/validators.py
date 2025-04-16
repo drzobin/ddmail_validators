@@ -381,3 +381,38 @@ def is_password_key_allowed(key,key_len=4096):
             return False
 
     return True
+
+
+def is_filename_allowed(filename,filename_max_len=256,filename_min_len=3):
+    """Validate filename. 
+    Only allow the following chars: A-Z, a-z, 0-9 and .-_
+
+    Keyword arguments:
+    filename -- string containing the filanme.
+    filanme_max_len -- the allowed max length of the filename, default 256.
+    filanme_min_len -- the allowed min length of the filename, default 3.
+    """
+    if len(filename) > filename_max_len:
+        return False
+
+    if len(filename) < filename_min_len:
+        return False
+
+    if filename.startswith('.') or filename.startswith('-') or filename.startswith('_'):
+        return False
+    if filename.endswith('.') or filename.endswith('-') or filename.endswith('_'):
+        return False
+    if '--' in filename:
+        return False
+    if '..' in filename:
+        return False
+    if '__' in filename:
+        return False
+
+    pattern = re.compile(r"[a-zA-Z0-9\-\_\.]")
+
+    for char in filename:
+        if not re.match(pattern, char):
+            return False
+
+    return True
