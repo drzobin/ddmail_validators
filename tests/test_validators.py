@@ -1,4 +1,4 @@
-from ddmail_validators.validators import is_username_allowed, is_email_allowed, is_domain_allowed, is_password_allowed, is_account_allowed, is_sha256_allowed, is_mx_valid, is_spf_valid, is_dkim_valid, is_dmarc_valid, is_openpgp_public_key_allowed, is_openpgp_key_fingerprint_allowed, is_openpgp_keyring_allowed, is_cookie_allowed, is_db_id_allowed, is_password_key_allowed
+from ddmail_validators.validators import is_username_allowed, is_email_allowed, is_domain_allowed, is_password_allowed, is_account_allowed, is_sha256_allowed, is_mx_valid, is_spf_valid, is_dkim_valid, is_dmarc_valid, is_openpgp_public_key_allowed, is_openpgp_key_fingerprint_allowed, is_openpgp_keyring_allowed, is_cookie_allowed, is_db_id_allowed, is_password_key_allowed, is_filename_allowed
 
 
 def test_is_username_allowed():
@@ -172,3 +172,25 @@ def test_is_password_key_allowed():
     assert is_password_key_allowed(data) is True
     assert is_password_key_allowed("A"*4097) is False
     assert is_password_key_allowed("A"*4095) is False
+
+def test_is_filename_allowed():
+    assert is_filename_allowed("aA3") is True
+    assert is_filename_allowed("a.A3") is True
+    assert is_filename_allowed("a-A3") is True
+    assert is_filename_allowed("a_A3") is True
+    assert is_filename_allowed("A"*256) is True
+    assert is_filename_allowed("aA") is False
+    assert is_filename_allowed("A"*257) is False
+    assert is_filename_allowed("aA3#") is False
+    assert is_filename_allowed("aA!3") is False
+    assert is_filename_allowed("\"aA3") is False
+    assert is_filename_allowed(".aA3") is False
+    assert is_filename_allowed("-aA3") is False
+    assert is_filename_allowed("_aA3") is False
+    assert is_filename_allowed("aA3.") is False
+    assert is_filename_allowed("aA3-") is False
+    assert is_filename_allowed("aA3_") is False
+    assert is_filename_allowed("a..A3") is False
+    assert is_filename_allowed("a--A3") is False
+    assert is_filename_allowed("a__A3") is False
+    assert is_filename_allowed("a!A3") is False
