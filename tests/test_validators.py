@@ -1,4 +1,5 @@
-from ddmail_validators.validators import is_username_allowed, is_email_allowed, is_domain_allowed, is_password_allowed, is_account_allowed, is_sha256_allowed, is_mx_valid, is_spf_valid, is_dkim_valid, is_dmarc_valid, is_openpgp_public_key_allowed, is_openpgp_key_fingerprint_allowed, is_openpgp_keyring_allowed, is_cookie_allowed, is_db_id_allowed, is_password_key_allowed, is_filename_allowed
+import base64
+from ddmail_validators.validators import is_username_allowed, is_email_allowed, is_domain_allowed, is_password_allowed, is_account_allowed, is_sha256_allowed, is_mx_valid, is_spf_valid, is_dkim_valid, is_dmarc_valid, is_openpgp_public_key_allowed, is_openpgp_key_fingerprint_allowed, is_openpgp_keyring_allowed, is_cookie_allowed, is_db_id_allowed, is_password_key_allowed, is_filename_allowed, is_base64_allowed
 
 
 def test_is_username_allowed():
@@ -193,3 +194,13 @@ def test_is_filename_allowed():
     assert is_filename_allowed("a--A3") is False
     assert is_filename_allowed("a__A3") is False
     assert is_filename_allowed("a!A3") is False
+
+def test_is_base64_allowed():
+    assert is_base64_allowed("aA3+/=") is True
+    assert is_base64_allowed("aA3+/=") is True
+    assert is_base64_allowed("R2Vla3NGb3JHZWVrcyBpcyB0aGUgYmVzdA==") is True
+    assert is_base64_allowed("aA") is False
+    assert is_base64_allowed("A"*257) is False
+    assert is_base64_allowed("R2Vla#3NGb3JHZWVrcyBpcyB0aGUgYmVzdA==") is False
+    assert is_base64_allowed("R2Vla-3NGb3JHZWVrcyBpcyB0aGUgYmVzdA==") is False
+    assert is_base64_allowed("R2Vla.3NGb3JHZWVrcyBpcyB0aGUgYmVzdA==") is False
