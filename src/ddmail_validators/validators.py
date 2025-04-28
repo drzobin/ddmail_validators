@@ -416,3 +416,26 @@ def is_filename_allowed(filename,filename_max_len=256,filename_min_len=3):
             return False
 
     return True
+
+def is_base64_allowed(base64,base64_max_len=256,base64_min_len=3):
+    """Validate base64 string. 
+    Only allow the following chars: A-Z, a-z, 0-9 and +/=
+
+    Keyword arguments:
+    base64 -- base64 string.
+    base64_max_len -- the allowed max length of the base64 string, default 256.
+    base64_min_len -- the allowed min length of the base64 string, default 3.
+    """
+    if len(base64) > base64_max_len:
+        return False
+
+    if len(base64) < base64_min_len:
+        return False
+
+    pattern = re.compile(r"[a-zA-Z0-9+/=]")
+
+    for char in base64:
+        if not re.match(pattern, char):
+            return False
+
+    return True
