@@ -168,7 +168,6 @@ def test_is_cookie_allowed():
 
 def test_is_password_key_allowed():
     data = "A"*4096
-    print(data)
     assert is_password_key_allowed(data) is True
     assert is_password_key_allowed("A"*4097) is False
     assert is_password_key_allowed("A"*4095) is False
