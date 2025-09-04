@@ -1,5 +1,5 @@
 import base64
-from ddmail_validators.validators import is_username_allowed, is_email_allowed, is_domain_allowed, is_password_allowed, is_account_allowed, is_sha256_allowed, is_mx_valid, is_spf_valid, is_dkim_valid, is_dmarc_valid, is_openpgp_public_key_allowed, is_openpgp_key_fingerprint_allowed, is_openpgp_keyring_allowed, is_cookie_allowed, is_db_id_allowed, is_password_key_allowed, is_filename_allowed, is_base64_allowed
+from ddmail_validators.validators import is_username_allowed, is_email_allowed, is_domain_allowed, is_password_allowed, is_account_allowed, is_sha256_allowed, is_mx_valid, is_spf_valid, is_dkim_valid, is_cname_valid, is_dmarc_valid, is_openpgp_public_key_allowed, is_openpgp_key_fingerprint_allowed, is_openpgp_keyring_allowed, is_cookie_allowed, is_db_id_allowed, is_password_key_allowed, is_filename_allowed, is_base64_allowed
 
 
 def test_is_username_allowed():
@@ -89,11 +89,13 @@ def test_is_spf_valid():
 
 
 def test_is_dkim_valid():
-    dkim_record = '"v=DKIM1; k=rsa;  \\009p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoxbFCUM83lUvHKku3mE/IOb2LArgPsjzhijO4pZfVLrLp7dv8RKDs4MmtFHrdWf4UibDFZtPm4IKcagDD3LlqgPSeewnfesI/kGCdz2SqPA/R5Cip5I1swtQ1lKa41eu6Rxym32fzCrRAhBfOZqM05BKPQQpxcSuyNmKOz+HGlGtkUMk5ebhWDtTsoc7ntw" "nhnAxaF+T61YQdYyCL \\009P7l6KRULaDJ3U7AkNAYrXpv0AdfjDVZp+GXu5fqTFTMi5pYGv1pj4621OSysDmjFlPksCgDouE11N+sJVCVPj//8gJCpzDv7y2kET9MIPmIlKGBTC1AQg5KWrbkeQPcEnzhRwIDAQAB"'
+    dkim_record = '"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoxPfU8PtYnrc9gcSw7G15U9cYTeaa8FZ+Nnlz4Zarlv00vYBSejIgbbX6WUE1HoVUT37+uGMHzSPIt7UyEdtSJs/c5caxfqP++Db11d5JJ1LnDAhtWuwe+dLFrQMSInCxKR+aqUBFK51DPhEDKD9dMAGIBeoZsZmIqqIFrpH7DgHCQdgUm1CbqFtQxEmJQ8zm" "b+C2SPcs3pxaI+4/fNFT7pcjLtZhmKHrxKJ7+iaUPKt6pFELgsB9RY3HGx039gsO2PC+4ULsYumxzhobCvwwLRzPqAWux00p5LhSadl5Obx88exLXRU0JIn1UeffiGzxNX6+3vrE2LLksjl+Jgo3wIDAQAB"'
+    assert is_dkim_valid("ddmail.se", "dkim1", dkim_record) is True
+    assert is_dkim_valid("drz.se", "dkim1", dkim_record) is False
 
-    assert is_dkim_valid("crew.ddmail.se", dkim_record) is True
-    assert is_dkim_valid("drz.se", dkim_record) is False
-
+def test_is_cname_valid():
+    cname_record = 'dkim1._domainkey.ddmail.se.'
+    assert is_cname_valid("dkim1._domainkey.crew.ddmail.se", cname_record) is True
 
 def test_is_dmarc_valid():
     dmarc_record = '"v=DMARC1; p=none"'
