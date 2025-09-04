@@ -176,16 +176,34 @@ def is_spf_valid(domain, spf_record):
     except:
         return False
 
+def is_cname_valid(cname_src_record,cname_dst_record):
+    """Validate if the dns record is a cname to a specific domain.
 
-def is_dkim_valid(domain, dkim_record):
-    """Validate dns dkim (as txt) record.
+    Keyword arguments:
+    cname_src_record -- string containg the domain that should be a cname to cname variable below.
+    cname_dst_record -- string containg the cname record source domain.
+    """
+    try:
+        answers = dns.resolver.resolve(cname_src_record, 'CNAME')
+        for rdata in answers:
+            if str(rdata) == cname_dst_record:
+                return True
+            else:
+                return False
+    except:
+        return False
+
+
+def is_dkim_valid(domain, selector ,dkim_record):
+    """Validate dns dkim txt record.
 
     Keyword arguments:
     domain -- string containg domain.
+    selector -- string containg DKIM selector.
     dkim_record -- string containg DKIM record.
     """
     try:
-        answers = dns.resolver.resolve("mail._domainkey." + domain, 'TXT')
+        answers = dns.resolver.resolve(selector + "._domainkey." + domain, 'TXT')
         for rdata in answers:
             if 'DKIM1' in str(rdata) and str(rdata) == dkim_record:
                 return True
@@ -339,7 +357,7 @@ def is_db_id_allowed(id):
 
 
 def is_cookie_allowed(cookie,cookie_len=128):
-    """Validate flask session secret cookie. 
+    """Validate flask session secret cookie.
     Only allow the following chars: A-Z, a-z and 0-9.
 
     Keyword arguments:
@@ -361,7 +379,7 @@ def is_cookie_allowed(cookie,cookie_len=128):
     return True
 
 def is_password_key_allowed(key,key_len=4096):
-    """Validate password key. 
+    """Validate password key.
     Only allow the following chars: A-Z, a-z and 0-9.
 
     Keyword arguments:
@@ -384,7 +402,7 @@ def is_password_key_allowed(key,key_len=4096):
 
 
 def is_filename_allowed(filename,filename_max_len=256,filename_min_len=3):
-    """Validate filename. 
+    """Validate filename.
     Only allow the following chars: A-Z, a-z, 0-9 and .-_
 
     Keyword arguments:
@@ -418,7 +436,7 @@ def is_filename_allowed(filename,filename_max_len=256,filename_min_len=3):
     return True
 
 def is_base64_allowed(base64,base64_max_len=256,base64_min_len=3):
-    """Validate base64 string. 
+    """Validate base64 string.
     Only allow the following chars: A-Z, a-z, 0-9 and +/=
 
     Keyword arguments:
