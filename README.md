@@ -35,4 +35,4 @@ Step 5: Install package<br>
 `pytest --cov=ddmail_validators tests/`
 
 ## Coding
-Follow PEP8 and PEP257. Use Flake8 with flake8-docstrings for linting. Strive for 100% test coverage.
+Follow PEP8 and PEP257. Use Ruff or Flake8 with flake8-docstrings for linting. Strive for 100% test coverage.
