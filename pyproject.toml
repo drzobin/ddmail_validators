@@ -22,7 +22,8 @@ dev = [
   "dnspython",
   "pytest",
   "pytest-cov",
-  "flake8",
+  "ruff",
+  "pyright",
   "hatchling",
   "twine",
 ]
