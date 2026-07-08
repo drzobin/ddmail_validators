@@ -1,8 +1,9 @@
 import re
+
 import dns.resolver
 
 
-def is_username_allowed(username,username_len=12):
+def is_username_allowed(username, username_len=12):
     """Validate username string. Only allow the following chars: A-Z and 0-9.
 
     Keyword arguments:
@@ -52,13 +53,13 @@ def is_domain_allowed(domain):
     if not len(domain) > 3:
         return False
 
-    if domain.startswith('.') or domain.startswith('-'):
+    if domain.startswith(".") or domain.startswith("-"):
         return False
-    if domain.endswith('.') or domain.endswith('-'):
+    if domain.endswith(".") or domain.endswith("-"):
         return False
-    if '--' in domain:
+    if "--" in domain:
         return False
-    if '..' in domain:
+    if ".." in domain:
         return False
 
     if domain.find(".") == -1:
@@ -84,29 +85,29 @@ def is_email_allowed(email):
     if len(email) > 256:
         return False
 
-    if email.count('@') != 1:
+    if email.count("@") != 1:
         return False
-    if email.startswith('.') or email.startswith('@') or email.startswith('-'):
+    if email.startswith(".") or email.startswith("@") or email.startswith("-"):
         return False
-    if email.endswith('.') or email.endswith('@') or email.endswith('-'):
+    if email.endswith(".") or email.endswith("@") or email.endswith("-"):
         return False
 
     # Split email in local part and domain part.
     # Example: [local part]@[domain part].
-    splitted_email = email.split('@')
+    splitted_email = email.split("@")
     local_part = splitted_email[0]
     domain_part = splitted_email[1]
 
     # Validate local part of email.
     if len(local_part) > 64:
         return False
-    if local_part.startswith('.') or local_part.startswith('-'):
+    if local_part.startswith(".") or local_part.startswith("-"):
         return False
-    if local_part.endswith('.') or local_part.endswith('-'):
+    if local_part.endswith(".") or local_part.endswith("-"):
         return False
-    if '--' in local_part:
+    if "--" in local_part:
         return False
-    if '..' in local_part:
+    if ".." in local_part:
         return False
 
     pattern = re.compile(r"[a-zA-Z0-9.+=_-]")
@@ -121,7 +122,7 @@ def is_email_allowed(email):
     return True
 
 
-def is_account_allowed(account,account_len=12):
+def is_account_allowed(account, account_len=12):
     """Validate account id string. Only allow the following chars: A-Z and 0-9
 
     Keyword arguments:
@@ -141,6 +142,28 @@ def is_account_allowed(account,account_len=12):
     return True
 
 
+def is_domain_mine(domain, verifyer_id, verifyer_str):
+    """Validate that the account domain is owned by the account by comparing a uniq string set by the
+    server to a dns TXT record that should be in the format [verifyer_id]=[verifyer_str] for the
+    specific domain. Example if verifyer_id="ddmail-verification" and verifyer_str="a1b2c3d4e5f6g7h8i9"
+    then the TXT record should be "ddmail-verification=a1b2c3d4e5f6g7h8i9" for the account domain.
+
+    Keyword arguments:
+    domain -- string containing the domain.
+    verifyer_id -- string containing the verifyer example [verifyer_id]=[verifyer_str].
+    verifyer_str -- string containing the verifyer example [verifyer_id]=[verifyer_str].
+    """
+    try:
+        answers = dns.resolver.resolve(domain, "TXT")
+        for rdata in answers:
+            if str(rdata) == verifyer_id + "=" + verifyer_str:
+                return True
+            else:
+                return False
+    except:
+        return False
+
+
 def is_mx_valid(domain, host, priority):
     """Validate dns domain mx record.
 
@@ -150,8 +173,12 @@ def is_mx_valid(domain, host, priority):
     priority -- string containing the priority.
     """
     try:
-        answers = dns.resolver.resolve(domain, 'MX')
-        if len(answers) == 1 and str(answers[0].exchange) == host and str(answers[0].preference == priority):
+        answers = dns.resolver.resolve(domain, "MX")
+        if (
+            len(answers) == 1
+            and str(answers[0].exchange) == host
+            and str(answers[0].preference == priority)
+        ):
             return True
         else:
             return False
@@ -167,16 +194,17 @@ def is_spf_valid(domain, spf_record):
     spf_record -- string containg the spf record.
     """
     try:
-        answers = dns.resolver.resolve(domain, 'TXT')
+        answers = dns.resolver.resolve(domain, "TXT")
         for rdata in answers:
-            if 'spf1' in str(rdata) and str(rdata) == spf_record:
+            if "spf1" in str(rdata) and str(rdata) == spf_record:
                 return True
             else:
                 return False
     except:
         return False
 
-def is_cname_valid(cname_src_record,cname_dst_record):
+
+def is_cname_valid(cname_src_record, cname_dst_record):
     """Validate if the dns record is a cname to a specific domain.
 
     Keyword arguments:
@@ -184,7 +212,7 @@ def is_cname_valid(cname_src_record,cname_dst_record):
     cname_dst_record -- string containg the cname record source domain.
     """
     try:
-        answers = dns.resolver.resolve(cname_src_record, 'CNAME')
+        answers = dns.resolver.resolve(cname_src_record, "CNAME")
         for rdata in answers:
             if str(rdata) == cname_dst_record:
                 return True
@@ -194,7 +222,7 @@ def is_cname_valid(cname_src_record,cname_dst_record):
         return False
 
 
-def is_dkim_valid(domain, selector ,dkim_record):
+def is_dkim_valid(domain, selector, dkim_record):
     """Validate dns dkim txt record.
 
     Keyword arguments:
@@ -203,9 +231,9 @@ def is_dkim_valid(domain, selector ,dkim_record):
     dkim_record -- string containg DKIM record.
     """
     try:
-        answers = dns.resolver.resolve(selector + "._domainkey." + domain, 'TXT')
+        answers = dns.resolver.resolve(selector + "._domainkey." + domain, "TXT")
         for rdata in answers:
-            if 'DKIM1' in str(rdata) and str(rdata) == dkim_record:
+            if "DKIM1" in str(rdata) and str(rdata) == dkim_record:
                 return True
             else:
                 return False
@@ -221,9 +249,9 @@ def is_dmarc_valid(domain, dmarc_record):
     dmarc_record -- string containg DMARC record.
     """
     try:
-        answers = dns.resolver.resolve("_dmarc." + domain, 'TXT')
+        answers = dns.resolver.resolve("_dmarc." + domain, "TXT")
         for rdata in answers:
-            if 'DMARC1' in str(rdata) and str(rdata) == dmarc_record:
+            if "DMARC1" in str(rdata) and str(rdata) == dmarc_record:
                 return True
             else:
                 return False
@@ -242,28 +270,14 @@ def is_openpgp_public_key_allowed(public_key):
         return False
 
     # Check start and end of string.
-    if public_key.startswith(
-            "-----BEGIN PGP PUBLIC KEY BLOCK-----"
-            ) is not True:
-
+    if public_key.startswith("-----BEGIN PGP PUBLIC KEY BLOCK-----") is not True:
         return False
-    if public_key.endswith(
-            "-----END PGP PUBLIC KEY BLOCK-----"
-            ) is not True:
-
+    if public_key.endswith("-----END PGP PUBLIC KEY BLOCK-----") is not True:
         return False
 
-    public_key = public_key.replace(
-            "-----BEGIN PGP PUBLIC KEY BLOCK-----",
-            "",
-            1
-            )
+    public_key = public_key.replace("-----BEGIN PGP PUBLIC KEY BLOCK-----", "", 1)
 
-    public_key = public_key.replace(
-            "-----END PGP PUBLIC KEY BLOCK-----",
-            "",
-            1
-            )
+    public_key = public_key.replace("-----END PGP PUBLIC KEY BLOCK-----", "", 1)
 
     # Only allow A-Z ,a-z, 0-9 and +/=
     pattern = re.compile(r"[a-zA-Z0-9\+\/\=\s]")
@@ -356,7 +370,7 @@ def is_db_id_allowed(id):
     return True
 
 
-def is_cookie_allowed(cookie,cookie_len=128):
+def is_cookie_allowed(cookie, cookie_len=128):
     """Validate flask session secret cookie.
     Only allow the following chars: A-Z, a-z and 0-9.
 
@@ -378,7 +392,8 @@ def is_cookie_allowed(cookie,cookie_len=128):
 
     return True
 
-def is_password_key_allowed(key,key_len=4096):
+
+def is_password_key_allowed(key, key_len=4096):
     """Validate password key.
     Only allow the following chars: A-Z, a-z and 0-9.
 
@@ -401,7 +416,7 @@ def is_password_key_allowed(key,key_len=4096):
     return True
 
 
-def is_filename_allowed(filename,filename_max_len=256,filename_min_len=3):
+def is_filename_allowed(filename, filename_max_len=256, filename_min_len=3):
     """Validate filename.
     Only allow the following chars: A-Z, a-z, 0-9 and .-_
 
@@ -416,15 +431,15 @@ def is_filename_allowed(filename,filename_max_len=256,filename_min_len=3):
     if len(filename) < filename_min_len:
         return False
 
-    if filename.startswith('.') or filename.startswith('-') or filename.startswith('_'):
+    if filename.startswith(".") or filename.startswith("-") or filename.startswith("_"):
         return False
-    if filename.endswith('.') or filename.endswith('-') or filename.endswith('_'):
+    if filename.endswith(".") or filename.endswith("-") or filename.endswith("_"):
         return False
-    if '--' in filename:
+    if "--" in filename:
         return False
-    if '..' in filename:
+    if ".." in filename:
         return False
-    if '__' in filename:
+    if "__" in filename:
         return False
 
     pattern = re.compile(r"[a-zA-Z0-9\-\_\.]")
@@ -435,7 +450,8 @@ def is_filename_allowed(filename,filename_max_len=256,filename_min_len=3):
 
     return True
 
-def is_base64_allowed(base64,base64_max_len=256,base64_min_len=3):
+
+def is_base64_allowed(base64, base64_max_len=256, base64_min_len=3):
     """Validate base64 string.
     Only allow the following chars: A-Z, a-z, 0-9 and +/=
 
