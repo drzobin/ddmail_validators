@@ -1,3 +1,7 @@
+from unittest.mock import patch
+
+import dns.resolver
+
 from ddmail_validators.validators import (
     is_account_allowed,
     is_base64_allowed,
@@ -7,6 +11,7 @@ from ddmail_validators.validators import (
     is_dkim_valid,
     is_dmarc_valid,
     is_domain_allowed,
+    is_domain_mine,
     is_email_allowed,
     is_filename_allowed,
     is_mx_valid,
@@ -97,8 +102,94 @@ def test_is_account_allowed():
     assert is_account_allowed("GQW3E4XN3BA_") is False
 
 
+def test_is_domain_mine_matching_record():
+    """When the TXT record matches [verifyer_id]=[verifyer_str], return True."""
+    verifyer_id = "ddmail-verification"
+    verifyer_str = "a1b2c3d4e5f6g7h8i9"
+    expected = verifyer_id + "=" + verifyer_str
+
+    with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
+        mock_resolve.return_value = [expected]
+        assert is_domain_mine("example.com", verifyer_id, verifyer_str) is True
+        mock_resolve.assert_called_once_with("example.com", "TXT")
+
+
+def test_is_domain_mine_non_matching_record():
+    """When the TXT record does not match, return False."""
+    with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
+        mock_resolve.return_value = ["some-other-txt-record"]
+        assert (
+            is_domain_mine("example.com", "ddmail-verification", "a1b2c3d4e5f6g7h8i9")
+            is False
+        )
+
+
+def test_is_domain_mine_wrong_verifyer_str():
+    """Correct verifyer_id but wrong verifyer_str returns False."""
+    with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
+        mock_resolve.return_value = ["ddmail-verification=wrongvalue"]
+        assert (
+            is_domain_mine("example.com", "ddmail-verification", "a1b2c3d4e5f6g7h8i9")
+            is False
+        )
+
+
+def test_is_domain_mine_wrong_verifyer_id():
+    """Wrong verifyer_id but correct verifyer_str returns False."""
+    with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
+        mock_resolve.return_value = ["other-verification=a1b2c3d4e5f6g7h8i9"]
+        assert (
+            is_domain_mine("example.com", "ddmail-verification", "a1b2c3d4e5f6g7h8i9")
+            is False
+        )
+
+
+def test_is_domain_mine_nxdomain():
+    """When the domain does not exist, return False."""
+    with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
+        mock_resolve.side_effect = dns.resolver.NXDOMAIN
+        assert (
+            is_domain_mine(
+                "nonexistent-domain.invalid",
+                "ddmail-verification",
+                "a1b2c3d4e5f6g7h8i9",
+            )
+            is False
+        )
+
+
+def test_is_domain_mine_no_answer():
+    """When the domain has no TXT records, return False."""
+    with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
+        mock_resolve.side_effect = dns.resolver.NoAnswer
+        assert (
+            is_domain_mine("example.com", "ddmail-verification", "a1b2c3d4e5f6g7h8i9")
+            is False
+        )
+
+
+def test_is_domain_mine_timeout():
+    """When the DNS lookup times out, return False."""
+    with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
+        mock_resolve.side_effect = dns.resolver.LifetimeTimeout
+        assert (
+            is_domain_mine("example.com", "ddmail-verification", "a1b2c3d4e5f6g7h8i9")
+            is False
+        )
+
+
+def test_is_domain_mine_generic_exception():
+    """Any exception from dns.resolver.resolve should be caught and return False."""
+    with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
+        mock_resolve.side_effect = Exception("boom")
+        assert (
+            is_domain_mine("example.com", "ddmail-verification", "a1b2c3d4e5f6g7h8i9")
+            is False
+        )
+
+
 def test_is_mx_valid():
-    assert is_mx_valid("crew.ddmail.se", "mail.ddmail.se.", "10") is True
+    assert is_mx_valid("crew.ddmail.se", "smtp.ddmail.se.", "10") is True
     assert is_mx_valid("drz.se", "mail.ddmail.se.", "10") is False
 
 
