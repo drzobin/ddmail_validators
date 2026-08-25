@@ -11,6 +11,7 @@ from ddmail_validators.validators import (
     is_dkim_valid,
     is_dmarc_valid,
     is_domain_allowed,
+    is_domain_verifyer_allowed,
     is_domain_mine,
     is_email_allowed,
     is_filename_allowed,
@@ -74,6 +75,10 @@ def test_is_domain_allowed():
 def test_is_email_allowed():
     assert is_email_allowed("test@test.se") is True
     assert is_email_allowed("test@tes-t.se") is True
+    assert is_email_allowed("tEs/=t@test.se") is True
+    assert is_email_allowed("t+Est@test.se") is True
+    assert is_email_allowed("t-Est@test.se") is True
+    assert is_email_allowed("t_Est@test.se") is True
     assert is_email_allowed("test@tes_t.se") is False
     assert is_email_allowed("t@t.s") is False
     assert is_email_allowed("test@test.se.") is False
@@ -101,6 +106,12 @@ def test_is_account_allowed():
     assert is_account_allowed("GQW3E4X-3BA2") is False
     assert is_account_allowed("GQW3E4XN3BA_") is False
 
+def test_is_domain_verifyer_allowed():
+    assert is_domain_verifyer_allowed("\"ddmail-verification=f3ds3rf5rf34d54rf43d35gt\"","ddmail-verification=") is True
+    assert is_domain_verifyer_allowed("\"ddmail-verification=3ds3rf5rf34d54rf43d35gt\"","ddmail-verification=") is False
+    assert is_domain_verifyer_allowed("\"ddmail-verificatio=f3ds3rf5rf34d54rf43d35gt\"","ddmail-verification=") is False
+    assert is_domain_verifyer_allowed("\"ddmail-verification=f3ds#rf5rf34d54rf43d35gt\"","ddmail-verification=") is False
+    assert is_domain_verifyer_allowed("\"ddmaii-verification=f3ds3rf5rf34d54rf43d35gt\"","ddmail-verification=") is False
 
 def test_is_domain_mine_matching_record():
     """When the TXT record matches [verifyer_id]=[verifyer_str], return True."""
@@ -194,6 +205,7 @@ def test_is_mx_valid():
 
 
 def test_is_spf_valid():
+    assert is_spf_valid("test.ddmail.se", '"v=spf1 mx -all"') is True
     assert is_spf_valid("crew.ddmail.se", '"v=spf1 mx -all"') is True
     assert is_spf_valid("drz.se", '"v=spf1 mx -all"') is False
 
