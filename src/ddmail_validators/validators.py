@@ -82,14 +82,14 @@ def is_email_allowed(email):
     # Check email length.
     if not len(email) > 6:
         return False
-    if len(email) > 256:
+    if len(email) > 254:
         return False
 
     if email.count("@") != 1:
         return False
-    if email.startswith(".") or email.startswith("@") or email.startswith("-"):
+    if email.startswith(".") or email.startswith("@"):
         return False
-    if email.endswith(".") or email.endswith("@") or email.endswith("-"):
+    if email.endswith(".") or email.endswith("@"):
         return False
 
     # Split email in local part and domain part.
@@ -101,16 +101,14 @@ def is_email_allowed(email):
     # Validate local part of email.
     if len(local_part) > 64:
         return False
-    if local_part.startswith(".") or local_part.startswith("-"):
+    if local_part.startswith("."):
         return False
-    if local_part.endswith(".") or local_part.endswith("-"):
-        return False
-    if "--" in local_part:
+    if local_part.endswith("."):
         return False
     if ".." in local_part:
         return False
 
-    pattern = re.compile(r"[a-zA-Z0-9.+=_-]")
+    pattern = re.compile(r"[a-zA-Z0-9.+=_/-]")
     for char in local_part:
         if not re.match(pattern, char):
             return False
@@ -141,25 +139,58 @@ def is_account_allowed(account, account_len=12):
 
     return True
 
+def is_domain_verifyer_allowed(verifyer, verifyer_str, verifyer_code_len=24):
+    """Validate dns domain verifyer TXT record.
 
-def is_domain_mine(domain, verifyer_id, verifyer_str):
+    Keyword arguments:
+    verifyer -- string contining the dns TXT verifyer record.
+    verifyer_str -- string containing the varifyer variable name of the dns TXT verifyer record.
+    verifyer_code_len -- integer max length of code part of dns TXT verifyer record, default 24.
+    """
+    if not verifyer.startswith("\"") or not verifyer.endswith("\""):
+        return False
+
+    verifyer = verifyer.replace("\"","", 2)
+    
+    # Split verifyer TXT record.
+    splitted_verifyer = verifyer.split("=")
+
+    if not splitted_verifyer[0] + "=" == verifyer_str:
+        return False
+    
+    # Check length.
+    if len(splitted_verifyer[1]) != verifyer_code_len:
+        return False
+
+    # Check allowed char.
+    pattern = re.compile(r"[a-z0-9]")
+    for char in splitted_verifyer[1]:
+        if not re.match(pattern, char):
+            return False
+
+    return True
+
+def is_domain_mine(domain, verifyer_id, verifyer_code):
     """Validate that the account domain is owned by the account by comparing a uniq string set by the
-    server to a dns TXT record that should be in the format [verifyer_id]=[verifyer_str] for the
-    specific domain. Example if verifyer_id="ddmail-verification" and verifyer_str="a1b2c3d4e5f6g7h8i9"
+    server to a dns TXT record that should be in the format [verifyer_id]=[verifyer_code] for the
+    specific domain. Example if verifyer_id="ddmail-verification" and verifyer_code="a1b2c3d4e5f6g7h8i9"
     then the TXT record should be "ddmail-verification=a1b2c3d4e5f6g7h8i9" for the account domain.
 
     Keyword arguments:
     domain -- string containing the domain.
-    verifyer_id -- string containing the verifyer example [verifyer_id]=[verifyer_str].
-    verifyer_str -- string containing the verifyer example [verifyer_id]=[verifyer_str].
+    verifyer_id -- string containing the verifyer example [verifyer_id]=[verifyer_code].
+    verifyer_code -- string containing the verifyer example [verifyer_id]=[verifyer_code].
     """
     try:
+        # Get all TXT records of domain.
         answers = dns.resolver.resolve(domain, "TXT")
         for rdata in answers:
-            if str(rdata) == verifyer_id + "=" + verifyer_str:
-                return True
-            else:
-                return False
+            if  verifyer_id in str(rdata):
+                if str(rdata) == verifyer_id + "=" + verifyer_code:
+                    return True
+                else:
+                    return False
+        return False
     except:
         return False
 
@@ -194,12 +225,16 @@ def is_spf_valid(domain, spf_record):
     spf_record -- string containg the spf record.
     """
     try:
+        # Get all TXT records for domain.
         answers = dns.resolver.resolve(domain, "TXT")
         for rdata in answers:
-            if "spf1" in str(rdata) and str(rdata) == spf_record:
-                return True
-            else:
-                return False
+            if "spf1" in str(rdata):
+                if str(rdata) == spf_record:
+                    return True
+                else:
+                    return False
+        # If no TXT record contain "spf1" return False
+        return False
     except:
         return False
 
