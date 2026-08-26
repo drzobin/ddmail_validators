@@ -117,7 +117,7 @@ def test_is_domain_mine_matching_record():
     """When the TXT record matches [verifyer_id]=[verifyer_str], return True."""
     verifyer_id = "ddmail-verification"
     verifyer_str = "a1b2c3d4e5f6g7h8i9"
-    expected = verifyer_id + "=" + verifyer_str
+    expected =  "\"" + verifyer_id + "=" + verifyer_str + "\""
 
     with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
         mock_resolve.return_value = [expected]
