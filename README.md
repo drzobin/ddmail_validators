@@ -19,8 +19,8 @@ Step 2: Setup python virtual environments<br>
 `python -m venv [venv path]`<br>
 `source [venv path]/bin/activate`<br>
 <br>
-Step 3: Install required dependencies<br>
-`pip install -r requirements.txt`<br>
+Step 3: Install package and required dependencies<br>
+`pip install -e .[dev]`<br>
 <br>
 Step 4: Build package<br>
 `python -m pip install --upgrade build`<br>
