@@ -185,8 +185,8 @@ def is_domain_mine(domain, verifyer_id, verifyer_code):
         # Get all TXT records of domain.
         answers = dns.resolver.resolve(domain, "TXT")
         for rdata in answers:
-            if  verifyer_id in str(rdata):
-                if str(rdata) == verifyer_id + "=" + verifyer_code:
+            if verifyer_id in str(rdata):
+                if str(rdata) == "\"" + verifyer_id + "=" + verifyer_code + "\"":
                     return True
                 else:
                     return False
