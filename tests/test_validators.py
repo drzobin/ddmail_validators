@@ -113,11 +113,14 @@ def test_is_domain_verifyer_allowed():
     assert is_domain_verifyer_allowed("\"ddmail-verification=f3ds#rf5rf34d54rf43d35gt\"","ddmail-verification=") is False
     assert is_domain_verifyer_allowed("\"ddmaii-verification=f3ds3rf5rf34d54rf43d35gt\"","ddmail-verification=") is False
 
+def test_is_domain_mine():
+    assert is_domain_mine("test.ddmail.se", "ddmail-verification=", "9mh938vdedq62fbqpij1w") is True
+
 def test_is_domain_mine_matching_record():
     """When the TXT record matches [verifyer_id]=[verifyer_str], return True."""
-    verifyer_id = "ddmail-verification"
+    verifyer_id = "ddmail-verification="
     verifyer_str = "a1b2c3d4e5f6g7h8i9"
-    expected =  "\"" + verifyer_id + "=" + verifyer_str + "\""
+    expected =  "\"" + verifyer_id + verifyer_str + "\""
 
     with patch("ddmail_validators.validators.dns.resolver.resolve") as mock_resolve:
         mock_resolve.return_value = [expected]
